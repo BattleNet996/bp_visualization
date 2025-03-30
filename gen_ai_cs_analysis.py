@@ -62,13 +62,20 @@ def fig_to_base64(fig):
 # Function to create spider/radar chart for a given dataframe and category
 def create_spider_chart(data, category_col, title, filename=None):
     """Create a spider/radar chart for the given category"""
+    # Get all possible category values from the data
+    all_cat_values = sorted(data[category_col].unique())
+    
     # Calculate the frequency of each category value, only counting unique companies
     cat_company_counts = data[['Company', category_col]].drop_duplicates()
-    cat_counts = cat_company_counts[category_col].value_counts().reset_index()
-    cat_counts.columns = ['Category', 'Count']
+    cat_counts_series = cat_company_counts[category_col].value_counts()
+    
+    # Create a DataFrame with all possible categories, filling missing values with 0
+    cat_counts = pd.DataFrame({'Category': all_cat_values})
+    cat_counts['Count'] = cat_counts['Category'].map(lambda x: cat_counts_series.get(x, 0))
     
     # Get category labels if available
     if f'{category_col} Label' in data.columns:
+        # Get all unique category values and their labels
         label_mapping = data[[category_col, f'{category_col} Label']].drop_duplicates()
         label_mapping = dict(zip(label_mapping[category_col], label_mapping[f'{category_col} Label']))
         cat_counts['Label'] = cat_counts['Category'].map(label_mapping)
@@ -76,7 +83,7 @@ def create_spider_chart(data, category_col, title, filename=None):
         cat_counts['Label'] = cat_counts['Category']
     
     # Create radar chart
-    fig = plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(14, 14))  # Further increased figure size
     ax = fig.add_subplot(111, polar=True)
     
     # Calculate angles for each category
@@ -91,12 +98,24 @@ def create_spider_chart(data, category_col, title, filename=None):
     ax.plot(angles, cat_counts['Count'], 'o-', color=color_palette[0], linewidth=2, label='Count')
     ax.fill(angles, cat_counts['Count'], color=color_palette[0], alpha=0.25)
     
-    # Set category labels
+    # Set category labels with significantly larger font size
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(cat_counts['Label'].iloc[:-1], size=10)
+    ax.set_xticklabels(cat_counts['Label'].iloc[:-1], size=22, fontweight='bold')  # Increased font size and made bold
+    
+    # Adjust layout to give more space for labels
+    plt.gcf().subplots_adjust(bottom=0.2, top=0.8, left=0.1, right=0.9)
     
     # Customize the chart
-    ax.set_title(title, size=15, color=color_palette[0], y=1.1)
+    ax.set_title(title, size=22, color=color_palette[0], y=1.1, fontweight='bold')  # Increased title font size
+    
+    # Enhance the tick labels (y-axis)
+    ax.tick_params(axis='y', labelsize=16)  # Increased y-tick font size
+    
+    # Add a legend with larger font
+    ax.legend(loc='upper right', fontsize=18)
+    
+    # Draw circle at center for better visualization
+    ax.grid(True)
     
     # Save if filename provided
     if filename:
@@ -159,12 +178,12 @@ def create_heatmap(df):
         cross_tab = pd.crosstab(company_cats[f'Cat {cat1}'], company_cats[f'Cat {cat2}'])
         
         # Create heatmap
-        plt.figure(figsize=(12, 10))
+        plt.figure(figsize=(14, 12))  # Increased figure size
         custom_cmap = LinearSegmentedColormap.from_list("custom_purple", 
                                                        [(1, 1, 1)] + color_palette, N=100)
         
         ax = sns.heatmap(cross_tab, cmap=custom_cmap, annot=True, fmt='d',
-                   cbar_kws={'label': 'Frequency'})
+                   cbar_kws={'label': 'Frequency'}, annot_kws={"size": 14})  # Increased annotation size
         
         # Get category labels
         cat1_labels = df[[f'Cat {cat1}', f'Cat {cat1} Label']].drop_duplicates()
@@ -177,10 +196,10 @@ def create_heatmap(df):
         new_x_labels = [f"{idx} - {cat2_label_dict.get(idx, '')}" for idx in cross_tab.columns]
         new_y_labels = [f"{idx} - {cat1_label_dict.get(idx, '')}" for idx in cross_tab.index]
         
-        ax.set_xticklabels(new_x_labels, rotation=45, ha='right')
-        ax.set_yticklabels(new_y_labels, rotation=0)
+        ax.set_xticklabels(new_x_labels, rotation=45, ha='right', fontsize=16)  # Increased font size
+        ax.set_yticklabels(new_y_labels, rotation=0, fontsize=16)  # Increased font size
         
-        plt.title(f'Correlation between Cat {cat1} and Cat {cat2}', fontsize=15, color=color_palette[0])
+        plt.title(f'Correlation between Cat {cat1} and Cat {cat2}', fontsize=20, color=color_palette[0], fontweight='bold')  # Increased title font size
         plt.tight_layout()
         
         # Save the figure

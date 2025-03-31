@@ -10,6 +10,7 @@ basic_stats = np.load('gen_ai_cs_viz/basic_stats.npy', allow_pickle=True).item()
 all_industry_spider_charts = np.load('gen_ai_cs_viz/all_industry_spider_charts.npy', allow_pickle=True).item()
 per_industry_spider_charts = np.load('gen_ai_cs_viz/per_industry_spider_charts.npy', allow_pickle=True).item()
 heatmaps = np.load('gen_ai_cs_viz/heatmaps.npy', allow_pickle=True).item()
+telco_insights = np.load('gen_ai_cs_viz/telco_insights.npy', allow_pickle=True).item()
 
 # Load the original data for additional insights
 df = pd.read_csv('tableau_ready_data.csv')
@@ -18,17 +19,34 @@ df = pd.read_csv('tableau_ready_data.csv')
 def generate_insights():
     insights = {}
     
-    # Get unique company-category combinations for accurate counting
-    cat1_company = df[['Company', 'Cat 1', 'Cat 1 Label']].drop_duplicates()
-    cat2_company = df[['Company', 'Cat 2', 'Cat 2 Label']].drop_duplicates()
-    cat3_company = df[['Company', 'Cat 3', 'Cat 3 Label']].drop_duplicates()
-    cat4_company = df[['Company', 'Cat 4', 'Cat 4 Label']].drop_duplicates()
+    # Separate Telco and non-Telco data
+    telco_df = df[df['Industry'] == 'Telco']
+    non_telco_df = df[df['Industry'] != 'Telco']
     
-    # Categories frequency insights
-    insights['cat1_top'] = cat1_company['Cat 1 Label'].value_counts().index[0]
-    insights['cat2_top'] = cat2_company['Cat 2 Label'].value_counts().index[0]
-    insights['cat3_top'] = cat3_company['Cat 3 Label'].value_counts().index[0]
-    insights['cat4_top'] = cat4_company['Cat 4 Label'].value_counts().index[0]
+    # Get unique company-category combinations for accurate counting
+    # For all industries except Telco
+    cat1_company = non_telco_df[['Company', 'Cat 1', 'Cat 1 Label']].drop_duplicates()
+    cat2_company = non_telco_df[['Company', 'Cat 2', 'Cat 2 Label']].drop_duplicates()
+    cat3_company = non_telco_df[['Company', 'Cat 3', 'Cat 3 Label']].drop_duplicates()
+    cat4_company = non_telco_df[['Company', 'Cat 4', 'Cat 4 Label']].drop_duplicates()
+    
+    # For Telco industry
+    telco_cat1_company = telco_df[['Company', 'Cat 1', 'Cat 1 Label']].drop_duplicates()
+    telco_cat2_company = telco_df[['Company', 'Cat 2', 'Cat 2 Label']].drop_duplicates()
+    telco_cat3_company = telco_df[['Company', 'Cat 3', 'Cat 3 Label']].drop_duplicates()
+    telco_cat4_company = telco_df[['Company', 'Cat 4', 'Cat 4 Label']].drop_duplicates()
+    
+    # Categories frequency insights for all industries except Telco
+    insights['cat1_top'] = cat1_company['Cat 1 Label'].value_counts().index[0] if not cat1_company.empty else "N/A"
+    insights['cat2_top'] = cat2_company['Cat 2 Label'].value_counts().index[0] if not cat2_company.empty else "N/A"
+    insights['cat3_top'] = cat3_company['Cat 3 Label'].value_counts().index[0] if not cat3_company.empty else "N/A"
+    insights['cat4_top'] = cat4_company['Cat 4 Label'].value_counts().index[0] if not cat4_company.empty else "N/A"
+    
+    # Categories frequency insights for Telco
+    insights['telco_cat1_top'] = telco_cat1_company['Cat 1 Label'].value_counts().index[0] if not telco_cat1_company.empty else "N/A"
+    insights['telco_cat2_top'] = telco_cat2_company['Cat 2 Label'].value_counts().index[0] if not telco_cat2_company.empty else "N/A"
+    insights['telco_cat3_top'] = telco_cat3_company['Cat 3 Label'].value_counts().index[0] if not telco_cat3_company.empty else "N/A"
+    insights['telco_cat4_top'] = telco_cat4_company['Cat 4 Label'].value_counts().index[0] if not telco_cat4_company.empty else "N/A"
     
     # Industry specific insights
     industry_insights = {}
@@ -87,6 +105,9 @@ def generate_insights():
                 }
     
     insights['correlation_insights'] = correlation_insights
+    
+    # Add Telco vs Other industries insights
+    insights.update(telco_insights)
     
     return insights
 
@@ -199,11 +220,6 @@ html_template = """
         
         .viz-card-content {
             padding: 15px;
-        }
-        
-        .viz-card h3 {
-            margin-top: 0;
-            color: var(--secondary-color);
         }
         
         .insight-box {
@@ -361,20 +377,49 @@ html_template = """
                         </tbody>
                     </table>
                 </div>
+                
+                <div class="stat-card">
+                    <h3>Telco Industry Statistics</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Top Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Problem-Solution</td>
+                                <td>{{ insights.telco_cat1_top }}</td>
+                            </tr>
+                            <tr>
+                                <td>AI Technology</td>
+                                <td>{{ insights.telco_cat2_top }}</td>
+                            </tr>
+                            <tr>
+                                <td>Customer Journey</td>
+                                <td>{{ insights.telco_cat3_top }}</td>
+                            </tr>
+                            <tr>
+                                <td>Data Modality</td>
+                                <td>{{ insights.telco_cat4_top }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
         
         <section>
             <h2 class="section-title">1. Overall Summary - Spider Web Charts by Category</h2>
-            <p>These spider web charts show the distribution of each category across all industries in the dataset.</p>
+            <p>These spider web charts show the distribution of each category across all industries except Telco in the dataset.</p>
             
             <div class="viz-container">
                 {% for cat_num in range(1, 5) %}
                 <div class="viz-card">
                     <img src="data:image/png;base64,{{ all_industry_spider_charts['all_industries_Cat ' + cat_num|string] }}" alt="Spider Chart for Category {{ cat_num }}">
                     <div class="viz-card-content">
-                        <h3>Category {{ cat_num }} Distribution</h3>
-                        <p>This visualization shows the frequency distribution of different values in Category {{ cat_num }} across all industries.</p>
+                        <p>Frequency distribution of different values in Category {{ cat_num }} across all industries except Telco.</p>
                     </div>
                 </div>
                 {% endfor %}
@@ -382,21 +427,69 @@ html_template = """
             
             <div class="insight-box">
                 <h3>Overall Category Distribution Insights</h3>
-                <p>Across all industries, we observe that "{{ insights.cat1_top }}" dominates in Problem-Solution (Category 1), while "{{ insights.cat2_top }}" is the most prevalent AI Technology (Category 2). For Customer Journey stages (Category 3), "{{ insights.cat3_top }}" shows the highest presence, and "{{ insights.cat4_top }}" is the most common Data Modality (Category 4).</p>
+                <p>Across all industries (excluding Telco), we observe that "{{ insights.cat1_top }}" dominates in Problem-Solution (Category 1), while "{{ insights.cat2_top }}" is the most prevalent AI Technology (Category 2). For Customer Journey stages (Category 3), "{{ insights.cat3_top }}" shows the highest presence, and "{{ insights.cat4_top }}" is the most common Data Modality (Category 4).</p>
+            </div>
+            
+            <h3>Telco vs. Other Industries Comparison</h3>
+            <p>These ratio-based spider charts compare the distribution of categories between Telco and other industries, normalized by the number of use cases.</p>
+            
+            <div class="viz-container">
+                {% for cat_num in range(1, 5) %}
+                <div class="viz-card">
+                    <img src="data:image/png;base64,{{ all_industry_spider_charts['telco_vs_others_Cat ' + cat_num|string] }}" alt="Telco vs Others Ratio Chart for Category {{ cat_num }}">
+                    <div class="viz-card-content">
+                        <p>Ratio comparison of Category {{ cat_num }} values between Telco (purple) and other industries (pink).</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="insight-box">
+                <h3>Telco vs. Other Industries Insights</h3>
+                <p>When comparing Telco to other industries, we observe that "{{ insights.telco_cat1_top }}" is the most prevalent in Problem-Solution for Telco (vs. "{{ insights.non_telco_cat1_top }}" for other industries). In AI Technology, Telco predominantly uses "{{ insights.telco_cat2_top }}" (vs. "{{ insights.non_telco_cat2_top }}" elsewhere).</p>
+                <p>For Customer Journey stages, Telco focuses on "{{ insights.telco_cat3_top }}" (vs. "{{ insights.non_telco_cat3_top }}" in other industries), while "{{ insights.telco_cat4_top }}" is the dominant Data Modality in Telco (vs. "{{ insights.non_telco_cat4_top }}" in other sectors).</p>
+                
+                <h4>Most Distinctive Aspects of Telco</h4>
+                <ul>
+                    {% for cat_num in range(1, 5) %}
+                    {% if insights['telco_distinctive_cat' + cat_num|string] != "None" and insights['telco_distinctive_cat' + cat_num|string + '_diff'] > 0 %}
+                    <li><strong>Category {{ cat_num }}:</strong> "{{ insights['telco_distinctive_cat' + cat_num|string] }}" is {{ insights['telco_distinctive_cat' + cat_num|string + '_diff'] }}% more common in Telco than in other industries.</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
             </div>
         </section>
         
         <section>
             <h2 class="section-title">2. Industry-Specific Spider Web Charts</h2>
             
+            {% if 'Telco' in per_industry_spider_charts %}
+            <h3>Telco</h3>
+            <div class="viz-container">
+                {% for cat_num in range(1, 5) %}
+                <div class="viz-card">
+                    <img src="data:image/png;base64,{{ per_industry_spider_charts['Telco']['cat_' + cat_num|string] }}" alt="Spider Chart for Telco - Category {{ cat_num }}">
+                    <div class="viz-card-content">
+                        <p>Distribution of Category {{ cat_num }} values specific to the Telco industry.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="insight-box">
+                <h3>Telco Industry Insights</h3>
+                <p>In the Telco industry, the dominant Problem-Solution (Category 1) is "{{ insights.industry_insights['Telco'].cat1_top }}", utilizing "{{ insights.industry_insights['Telco'].cat2_top }}" technology (Category 2). This industry primarily focuses on the "{{ insights.industry_insights['Telco'].cat3_top }}" stage of the customer journey (Category 3), with "{{ insights.industry_insights['Telco'].cat4_top }}" as the primary data modality (Category 4).</p>
+            </div>
+            {% endif %}
+            
             {% for industry, charts in per_industry_spider_charts.items() %}
+            {% if industry != 'Telco' %}
             <h3>{{ industry }}</h3>
             <div class="viz-container">
                 {% for cat_num in range(1, 5) %}
                 <div class="viz-card">
                     <img src="data:image/png;base64,{{ charts['cat_' + cat_num|string] }}" alt="Spider Chart for {{ industry }} - Category {{ cat_num }}">
                     <div class="viz-card-content">
-                        <h3>Category {{ cat_num }} in {{ industry }}</h3>
                         <p>Distribution of Category {{ cat_num }} values specific to the {{ industry }} industry.</p>
                     </div>
                 </div>
@@ -407,6 +500,7 @@ html_template = """
                 <h3>{{ industry }} Industry Insights</h3>
                 <p>In the {{ industry }} industry, the dominant Problem-Solution (Category 1) is "{{ insights.industry_insights[industry].cat1_top }}", utilizing "{{ insights.industry_insights[industry].cat2_top }}" technology (Category 2). This industry primarily focuses on the "{{ insights.industry_insights[industry].cat3_top }}" stage of the customer journey (Category 3), with "{{ insights.industry_insights[industry].cat4_top }}" as the primary data modality (Category 4).</p>
             </div>
+            {% endif %}
             {% endfor %}
         </section>
         
@@ -414,16 +508,33 @@ html_template = """
             <h2 class="section-title">3. Correlation Analysis - Heatmaps</h2>
             <p>These heatmaps show the correlations between different categories, helping to identify patterns across the dataset.</p>
             
+            <h3>All Industries</h3>
             <div class="viz-container">
                 {% for key, img in heatmaps.items() %}
+                {% if not key.startswith('telco_') %}
                 <div class="viz-card">
                     <img src="data:image/png;base64,{{ img }}" alt="Heatmap for {{ key }}">
                     <div class="viz-card-content">
                         {% set cats = key.split('_') %}
-                        <h3>Correlation between {{ cats[0]|replace('cat', 'Category ') }} and {{ cats[1]|replace('cat', 'Category ') }}</h3>
-                        <p>This heatmap shows the frequency of combinations between different values in {{ cats[0]|replace('cat', 'Category ') }} and {{ cats[1]|replace('cat', 'Category ') }}.</p>
+                        <p>Correlation between {{ cats[0]|replace('cat', 'Category ') }} and {{ cats[1]|replace('cat', 'Category ') }} across all industries.</p>
                     </div>
                 </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            
+            <h3>Telco Industry</h3>
+            <div class="viz-container">
+                {% for key, img in heatmaps.items() %}
+                {% if key.startswith('telco_') %}
+                <div class="viz-card">
+                    <img src="data:image/png;base64,{{ img }}" alt="Heatmap for {{ key }}">
+                    <div class="viz-card-content">
+                        {% set cats = key.replace('telco_', '').split('_') %}
+                        <p>Correlation between {{ cats[0]|replace('cat', 'Category ') }} and {{ cats[1]|replace('cat', 'Category ') }} in the Telco industry.</p>
+                    </div>
+                </div>
+                {% endif %}
                 {% endfor %}
             </div>
             
@@ -438,23 +549,49 @@ html_template = """
         
         <section>
             <h2 class="section-title">Conclusions and Recommendations</h2>
-            <p>Based on the analysis of GenAI tools in customer service across different industries, several key patterns and opportunities emerge:</p>
+            <p>Based on the analysis of GenAI tools in customer service across different industries, with a special focus on the Telco industry, several key patterns and opportunities emerge:</p>
             
             <div class="insight-box">
-                <h3>Key Findings for Telco Industry Application</h3>
+                <h3>Key Findings for Telco Industry</h3>
                 <ol>
-                    <li><strong>Dominant Use Cases:</strong> {{ insights.cat1_top }} and Customer Support & Query Resolution are the most prevalent business challenges being addressed by GenAI across industries.</li>
-                    <li><strong>Technology Trends:</strong> {{ insights.cat2_top }} shows the highest adoption rate, indicating its versatility and effectiveness across different customer service scenarios.</li>
-                    <li><strong>Customer Journey Focus:</strong> Most GenAI applications target the {{ insights.cat3_top }} stage, suggesting this as a high-value area for intervention.</li>
-                    <li><strong>Data Modality Preference:</strong> {{ insights.cat4_top }} remains the dominant modality, though multimodal approaches are growing in sophisticated implementations.</li>
+                    <li><strong>Telco's Distinctive Use Cases:</strong> Within the telecommunications industry, "{{ insights.telco_cat1_top }}" is the predominant business challenge being addressed by GenAI, compared to "{{ insights.non_telco_cat1_top }}" in other industries.</li>
+                    
+                    <li><strong>Technology Adoption in Telco:</strong> "{{ insights.telco_cat2_top }}" shows the highest adoption rate in the Telco sector, indicating its particular effectiveness for telecommunications customer service challenges.</li>
+                    
+                    <li><strong>Customer Journey Focus in Telco:</strong> Telco GenAI applications mainly target the "{{ insights.telco_cat3_top }}" stage, which differs from the "{{ insights.non_telco_cat3_top }}" focus in other industries, reflecting the unique customer interaction patterns in telecommunications.</li>
+                    
+                    <li><strong>Data Modality in Telco:</strong> "{{ insights.telco_cat4_top }}" is the primary modality used in Telco GenAI applications, compared to "{{ insights.non_telco_cat4_top }}" elsewhere, highlighting the specific data types that telecommunication customer service relies on.</li>
+                    
+                    {% for cat_num in range(1, 5) %}
+                    {% if insights['telco_distinctive_cat' + cat_num|string] != "None" and insights['telco_distinctive_cat' + cat_num|string + '_diff'] > 0 %}
+                    <li><strong>Distinctive Category {{ cat_num }} Feature:</strong> "{{ insights['telco_distinctive_cat' + cat_num|string] }}" is {{ insights['telco_distinctive_cat' + cat_num|string + '_diff'] }}% more prevalent in Telco than in other industries, representing a unique characteristic of AI applications in telecommunications.</li>
+                    {% endif %}
+                    {% endfor %}
                 </ol>
+                
+                <h3>Comparison Between Telco and Other Industries</h3>
+                <p>When comparing telecommunications to other sectors, we observe several important distinctions in how GenAI is deployed for customer service:</p>
+                <ul>
+                    <li>Telco's ratio of "{{ insights.telco_cat1_top }}" use cases is {% if insights.telco_cat1_top == insights.non_telco_cat1_top %}similar to{% elif insights.telco_cat1_top_percent > insights.non_telco_cat1_top_percent %}higher than{% else %}lower than{% endif %} other industries ({{ insights.telco_cat1_top_percent }}% vs. {{ insights.non_telco_cat1_top_percent }}%).</li>
+                    
+                    <li>For AI technology, Telco's preference for "{{ insights.telco_cat2_top }}" is {% if insights.telco_cat2_top == insights.non_telco_cat2_top %}aligned with{% elif insights.telco_cat2_top_percent > insights.non_telco_cat2_top_percent %}stronger than{% else %}weaker than{% endif %} other sectors ({{ insights.telco_cat2_top_percent }}% vs. {{ insights.non_telco_cat2_top_percent }}%).</li>
+                    
+                    <li>In the customer journey, Telco's focus on "{{ insights.telco_cat3_top }}" stages is {% if insights.telco_cat3_top == insights.non_telco_cat3_top %}consistent with{% elif insights.telco_cat3_top_percent > insights.non_telco_cat3_top_percent %}more intense than{% else %}less pronounced than{% endif %} other industries ({{ insights.telco_cat3_top_percent }}% vs. {{ insights.non_telco_cat3_top_percent }}%).</li>
+                    
+                    <li>For data modalities, Telco's use of "{{ insights.telco_cat4_top }}" is {% if insights.telco_cat4_top == insights.non_telco_cat4_top %}comparable to{% elif insights.telco_cat4_top_percent > insights.non_telco_cat4_top_percent %}higher than{% else %}lower than{% endif %} other sectors ({{ insights.telco_cat4_top_percent }}% vs. {{ insights.non_telco_cat4_top_percent }}%).</li>
+                </ul>
                 
                 <h3>Recommendations for Telco Customer Service</h3>
                 <ol>
-                    <li>Prioritize implementing conversational AI solutions that can handle complex customer queries, especially during service usage stages.</li>
-                    <li>Explore multimodal AI capabilities to enhance customer service across different channels (text, voice, visual).</li>
-                    <li>Consider the strong correlation between Customer Support & Query Resolution and Conversational AI when designing new customer service solutions.</li>
-                    <li>Look to E-Commerce and E-Government industries for innovative approaches that could be adapted to Telco customer service challenges.</li>
+                    <li><strong>Prioritize AI Solutions:</strong> Focus on implementing AI technologies for "{{ insights.telco_cat1_top }}" and "Customer Support & Query Resolution" as these represent the highest-value opportunities in telecommunications.</li>
+                    
+                    <li><strong>Technology Investment:</strong> Continue investing in "{{ insights.telco_cat2_top }}" capabilities while exploring complementary technologies that can enhance customer service operations.</li>
+                    
+                    <li><strong>Customer Journey Enhancement:</strong> Strengthen AI applications in the "{{ insights.telco_cat3_top }}" stage, which is crucial for telecommunications customer experiences.</li>
+                    
+                    <li><strong>Multimodal Capabilities:</strong> While "{{ insights.telco_cat4_top }}" remains dominant, consider expanding AI capabilities to handle multiple data types simultaneously, especially for complex customer interactions.</li>
+                    
+                    <li><strong>Industry Benchmarking:</strong> Look to other industries with advanced GenAI implementations, particularly in areas where Telco may be lagging, to identify transferable best practices.</li>
                 </ol>
             </div>
         </section>

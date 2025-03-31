@@ -504,3 +504,39 @@ Consumer Goods,Whirlpool,Customer,External,1,1,3,3,Summarization & Insights,Conv
 Consumer Goods,Whirlpool,Customer,External,1,6,3,3,Summarization & Insights,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Voice AI
 Consumer Goods,Whirlpool,Customer,External,5,1,3,3,Process Automation,Conversational AI,Service Usage & Ongoing Support,Text-to-Voice AI
 Consumer Goods,Whirlpool,Customer,External,5,6,3,3,Process Automation,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Voice AI
+Telco,Comcast,Customer,Internal; External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Comcast,Customer,Internal; External,1,4,4,1,Summarization & Insights,Process Automation (RPA),Customer Retention & Loyalty,Text-to-Text AI
+Telco,Comcast,Customer,Internal; External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Comcast,Customer,Internal; External,4,4,4,1,Customer Support & Query Resolution,Process Automation (RPA),Customer Retention & Loyalty,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,1,4,3,4,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,1,6,3,1,Summarization & Insights,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,1,6,3,4,Summarization & Insights,Predictive Analysis,Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,4,4,3,4,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,4,6,3,1,Customer Support & Query Resolution,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,4,6,3,4,Customer Support & Query Resolution,Predictive Analysis,Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,5,4,3,1,Process Automation,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,5,4,3,4,Process Automation,Process Automation (RPA),Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,5,6,3,1,Process Automation,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Deutsche Telekom,Company,Internal; External,5,6,3,4,Process Automation,Predictive Analysis,Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,LG Uplus,Customer,External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,LG Uplus,Customer,External,1,6,3,1,Summarization & Insights,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,LG Uplus,Customer,External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,LG Uplus,Customer,External,4,6,3,1,Customer Support & Query Resolution,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Orange,Customer,External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Orange,Customer,External,1,4,3,4,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,Orange,Customer,External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Orange,Customer,External,4,4,3,4,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Voice-to-Text AI
+Telco,BG Telekom,Customer,External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,BG Telekom,Customer,External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Salt Mobile,Customer,External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Salt Mobile,Customer,External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Sunrise,Customer,Internal; External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Sunrise,Customer,Internal; External,1,6,3,1,Summarization & Insights,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Sunrise,Customer,Internal; External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Sunrise,Customer,Internal; External,4,6,3,1,Customer Support & Query Resolution,Predictive Analysis,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Swisscom,Customer,Internal; External,1,4,3,1,Summarization & Insights,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Swisscom,Customer,Internal; External,1,7,3,1,Summarization & Insights,Sentiment Analysis & Customer Insights,Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Swisscom,Customer,Internal; External,4,4,3,1,Customer Support & Query Resolution,Process Automation (RPA),Service Usage & Ongoing Support,Text-to-Text AI
+Telco,Swisscom,Customer,Internal; External,4,7,3,1,Customer Support & Query Resolution,Sentiment Analysis & Customer Insights,Service Usage & Ongoing Support,Text-to-Text AI
